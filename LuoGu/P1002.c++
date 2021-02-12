@@ -4,49 +4,47 @@
 
 using namespace std;
 
-typedef unsigned int uint;
-typedef pair<uint, uint> cord; 
-
-uint factorial (uint);
-uint permuation (uint, uint);
-uint combo (uint, uint);
-
-// Calculate the factorials
-uint 
-factorial (uint m){
-    uint res = 1;
-    while (m != 0) res *= m--;
-    return res;    
-}
-
-// Calculate the permuation
-uint 
-permutation (uint m, uint n){return (uint)(factorial(m) / factorial(m - n));}
-
-// Calculate the combo
-uint
-combo (uint m, uint n){return (uint)(permutation(m, n) / factorial(n));}
+typedef pair<long long, long long> cord;
+long long grid[30][30];
 
 int main(void){
-    uint m, n, a, b;
-    vector<cord> vec;
+    long long m, n, a, b;
     cin >> m >> n >> a >> b;
-    // The dest coordinates (m, n) while the horse locates on (a, b)
-    // Calculates the controls points
-    vec.push_back(cord(a,b));
-    for (size_t i = 1; i <= 2; i++){
-        for (size_t j = 1; j <= 2; j++){
-            if (i == j) continue;
-            if (a < i || b < j) continue;
-            vec.push_back(cord(a+i, b+j));
-            vec.push_back(cord(a-i, b+j));
-            vec.push_back(cord(a+i, b-j));
-            vec.push_back(cord(a-i, b-j));
+    // target destination is (a,b)
+    uint count = 30;
+    // initial
+    vector<cord> vec = {cord(a,b), cord(a-1,b+2), cord(a-1,b-2), cord(a-2,b-1), cord(a-2,b+1), 
+                        cord(a+1, b-2), cord(a+1, b+2), cord(a+2, b-1), cord(a+2, b+1)};
+    grid[0][0] = 1;
+    
+    for (vector<cord>::iterator iter = vec.begin(); iter != vec.end(); iter ++){
+        long long x = iter->first, y = iter->second;
+        if (x >= 0 && y >= 0) {
+            grid[x][y] = -1;
         }
     }
-    for (vector<cord>::iterator iter = vec.begin(); iter != vec.end(); iter++){
-        cout << (*iter).first << " " << (*iter).second << endl;
+
+    for (size_t i = 1; i < count; i++){
+        if (grid[i-1][0] == -1) {grid[i][0] = 0;}
+        else if (grid[i][0] == -1) {continue;}
+        else{ grid[i][0] = grid[i-1][0];}
     }
-    
-    return 0;
+
+    for (size_t j = 1; j < count; j++){
+        if (grid[0][j-1] == -1) {grid[0][j] = 0;}
+        else if (grid[0][j] == -1) {continue;}
+        else{ grid[0][j] = grid[0][j-1];}
+    }
+
+    for (size_t i = 1; i < count; i++){
+        for (size_t j = 1; j < count; j++){
+            if (grid[i][j] == -1) continue;
+            if (grid[i-1][j] == -1) grid[i-1][j] = 0;
+            if (grid[i][j-1] == -1) grid[i][j-1] = 0;
+            
+            grid[i][j] = grid[i-1][j] + grid[i][j-1];
+        }
+    }
+
+    cout << grid[m][n] << endl;
 }
