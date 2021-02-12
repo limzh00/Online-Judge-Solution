@@ -29,13 +29,22 @@ combo (uint m, uint n){return (uint)(permutation(m, n) / factorial(n));}
 
 int main(void){
     uint m, n, a, b;
+    vector<cord> vec;
     cin >> m >> n >> a >> b;
     // The dest coordinates (m, n) while the horse locates on (a, b)
     // Calculates the controls points
-    vector<cord> vec;
-    vec.push_back(cord(m,n));
-    for (vector<cord>::iterator iter = vec.begin(); iter != vec.end(); iter++)
-    {
+    vec.push_back(cord(a,b));
+    for (size_t i = 1; i <= 2; i++){
+        for (size_t j = 1; j <= 2; j++){
+            if (i == j) continue;
+            if (a < i || b < j) continue;
+            vec.push_back(cord(a+i, b+j));
+            vec.push_back(cord(a-i, b+j));
+            vec.push_back(cord(a+i, b-j));
+            vec.push_back(cord(a-i, b-j));
+        }
+    }
+    for (vector<cord>::iterator iter = vec.begin(); iter != vec.end(); iter++){
         cout << (*iter).first << " " << (*iter).second << endl;
     }
     
